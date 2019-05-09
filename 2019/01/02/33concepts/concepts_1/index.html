@@ -1,0 +1,1439 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="33concepts,JS,v8,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JavaScript 如何工作？原文链接：[译] JavaScript 如何工作：对引擎、运行时、调用堆栈的概述 JavaScript 引擎 (V8引擎)JavaScript 引擎是执行JavaScript 代码的程序或者说是解释器。JavaScript引擎能够被实现成标准解释器或者是能够将 JavaScript以某种方式编译为字节码的即时编译器。V8引擎是驱动NodeJS的核心。V8引擎由2部">
+<meta name="keywords" content="33concepts,JS,v8">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1-调用堆栈(Call Stack)及JavaScript 执行机制">
+<meta property="og:url" content="http://Oldpost.github.io/2019/01/02/33concepts/concepts_1/index.html">
+<meta property="og:site_name" content="梵唱 | MC">
+<meta property="og:description" content="JavaScript 如何工作？原文链接：[译] JavaScript 如何工作：对引擎、运行时、调用堆栈的概述 JavaScript 引擎 (V8引擎)JavaScript 引擎是执行JavaScript 代码的程序或者说是解释器。JavaScript引擎能够被实现成标准解释器或者是能够将 JavaScript以某种方式编译为字节码的即时编译器。V8引擎是驱动NodeJS的核心。V8引擎由2部">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/02/33concepts/concepts_1/33_js_concepts.jpg">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/02/33concepts/concepts_1/img1.png">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/02/33concepts/concepts_1/test1.png">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/02/33concepts/concepts_1/test2.png">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/02/33concepts/concepts_1/img2.png">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/02/33concepts/concepts_1/test3.png">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/02/33concepts/concepts_1/test4.png">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/02/33concepts/concepts_1/test5.png">
+<meta property="og:image" content="http://oldpost.github.io/images/wechat.jpg">
+<meta property="og:updated_time" content="2019-05-07T03:15:52.536Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="1-调用堆栈(Call Stack)及JavaScript 执行机制">
+<meta name="twitter:description" content="JavaScript 如何工作？原文链接：[译] JavaScript 如何工作：对引擎、运行时、调用堆栈的概述 JavaScript 引擎 (V8引擎)JavaScript 引擎是执行JavaScript 代码的程序或者说是解释器。JavaScript引擎能够被实现成标准解释器或者是能够将 JavaScript以某种方式编译为字节码的即时编译器。V8引擎是驱动NodeJS的核心。V8引擎由2部">
+<meta name="twitter:image" content="http://oldpost.github.io/2019/01/02/33concepts/concepts_1/33_js_concepts.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://Oldpost.github.io/2019/01/02/33concepts/concepts_1/">
+
+
+
+
+
+  <title>1-调用堆栈(Call Stack)及JavaScript 执行机制 | 梵唱 | MC</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d5cc3f72952807fe78b0435e68473f4d";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">梵唱 | MC</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">脚踏实地，自强不息</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+<div id="hitokoto" style="
+    text-align: center;
+    padding-top: 25px;
+"></div>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://Oldpost.github.io/2019/01/02/33concepts/concepts_1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Silvia Xu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="梵唱 | MC">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">1-调用堆栈(Call Stack)及JavaScript 执行机制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-02T08:54:58+08:00">
+                2019-01-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/33个JavaScript概念/" itemprop="url" rel="index">
+                    <span itemprop="name">33个JavaScript概念</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/01/02/33concepts/concepts_1/" class="leancloud_visitors" data-flag-title="1-调用堆栈(Call Stack)及JavaScript 执行机制">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <img src="/2019/01/02/33concepts/concepts_1/33_js_concepts.jpg">
+<h2 id="JavaScript-如何工作？"><a href="#JavaScript-如何工作？" class="headerlink" title="JavaScript 如何工作？"></a>JavaScript 如何工作？</h2><p>原文链接：<br><a href="https://juejin.im/post/5a05b4576fb9a04519690d42" target="_blank" rel="noopener">[译] JavaScript 如何工作：对引擎、运行时、调用堆栈的概述</a></p>
+<h3 id="JavaScript-引擎-V8引擎"><a href="#JavaScript-引擎-V8引擎" class="headerlink" title="JavaScript 引擎 (V8引擎)"></a>JavaScript 引擎 (V8引擎)</h3><p>JavaScript 引擎是执行JavaScript 代码的程序或者说是解释器。JavaScript引擎能够被实现成标准解释器或者是能够将 JavaScript以某种方式编译为字节码的即时编译器。V8引擎是驱动NodeJS的核心。V8引擎由2部分组成：</p>
+<ul>
+<li>内存堆：这是内存分配发生的地方</li>
+<li>调用栈：这是你的代码执行时的地方</li>
+</ul>
+<blockquote>
+<p>浏览器内核：Mozilla(Gecko)–(Firefox等)  WebKit–(Safari、Chrome等) Opera(presto)–(Opera)  Trident–(IE)</p>
+</blockquote>
+<h3 id="运行时浏览器使用的API"><a href="#运行时浏览器使用的API" class="headerlink" title="运行时浏览器使用的API"></a>运行时浏览器使用的API</h3><p>浏览器运行时，除了引擎提供的API，还有浏览器提供的Web API，eg:DOM、AJAX、setTimeOut等，还有事件循环(Event Loop)和回调队列(Callback Queue)。</p>
+<h3 id="调用栈-LIFO-后进先出"><a href="#调用栈-LIFO-后进先出" class="headerlink" title="调用栈(LIFO 后进先出)"></a><span id="LIFO">调用栈(LIFO 后进先出)</span></h3><p>JavaScript 是一门单线程的语言，这意味着它只有一个调用栈，因此，它同一时间只能做一件事。<br>调用栈/执行栈: 是一种数据结构，记录在程序中的位置。当有任务进来时，将其放在栈顶，当从这个函数返回的时候，就会将这个函数从栈顶弹出。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> multiply(x, y) &#123;</span><br><span class="line">  console.log(<span class="string">'我进来了'</span>)</span><br><span class="line">  <span class="built_in">return</span> x * y;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> printSquare(x) &#123;</span><br><span class="line">  var s = multiply(x, x);</span><br><span class="line">  console.log(s);</span><br><span class="line">&#125;</span><br><span class="line">printSquare(5);</span><br></pre></td></tr></table></figure></p>
+<p>结果：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">我进来了</span><br><span class="line">25</span><br></pre></td></tr></table></figure></p>
+<img src="/2019/01/02/33concepts/concepts_1/img1.png" title="调用栈过程">
+<p>每一个进入调用栈的都称为__调用帧__。<br>当异常发生的时候堆栈追踪是怎么被构造的，堆栈的状态是如何的？eg:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">foo</span></span>() &#123;</span><br><span class="line">  throw new Error(<span class="string">'SessionStack will help you resolve crashes :)'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">bar</span></span>() &#123;</span><br><span class="line">  foo();</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">start</span></span>() &#123;</span><br><span class="line">  bar();</span><br><span class="line">&#125;</span><br><span class="line">start();</span><br></pre></td></tr></table></figure></p>
+<img src="/2019/01/02/33concepts/concepts_1/test1.png" title="Chrome下的结果">
+<p>堆栈溢出:某一时刻，调用栈中的函数调用的数量超过了调用栈的实际大小，浏览器决定干掉它，抛出一个错误<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">foo</span></span>() &#123;</span><br><span class="line">  foo();</span><br><span class="line">&#125;</span><br><span class="line">foo();</span><br></pre></td></tr></table></figure></p>
+<img src="/2019/01/02/33concepts/concepts_1/test2.png" title="Chrome下的结果">
+<h3 id="并发与事件循环"><a href="#并发与事件循环" class="headerlink" title="并发与事件循环"></a>并发与事件循环</h3><p>由于 JavaScript 只有一个调用堆栈，引发的思考：当某段代码运行变慢时会发生什么?<br>相关优化请看<a href="https://juejin.im/post/5a102e656fb9a044fd1158c6" target="_blank" rel="noopener">[译] JavaScript 如何工作：在 V8 引擎里 5 个优化代码的技巧</a></p>
+<h3 id="为什么要创建-V8-引擎"><a href="#为什么要创建-V8-引擎" class="headerlink" title="为什么要创建 V8 引擎?"></a>为什么要创建 V8 引擎?</h3><p>V8 最初被设计出来是为了提高浏览器内部 JavaScript 的执行性能。为了获取更快的速度，V8 将 JavaScript 代码编译成了更加高效的机器码，而不是使用解释器。它就像 SpiderMonkey 或者 Rhino (Mozilla) 等许多现代JavaScript 引擎一样，通过运用即时编译器将 JavaScript 代码编译为机器码。而这之中最主要的区别就是 V8 不生成字节码或者任何中间代码。</p>
+<h2 id="理解JavaScript中的执行上下文和执行栈"><a href="#理解JavaScript中的执行上下文和执行栈" class="headerlink" title="理解JavaScript中的执行上下文和执行栈"></a>理解JavaScript中的执行上下文和执行栈</h2><p>原文：<br><a href="https://juejin.im/post/5ba32171f265da0ab719a6d7" target="_blank" rel="noopener">[译] 理解 JavaScript 中的执行上下文和执行栈</a></p>
+<h3 id="执行上下文的类型"><a href="#执行上下文的类型" class="headerlink" title="执行上下文的类型"></a>执行上下文的类型</h3><ul>
+<li>全局执行上下文：任何不在函数内部的代码都在全局上下文中。它会执行两件事：创建一个全局的 window 对象（浏览器的情况下），并且设置 this 的值等于这个全局对象。一个程序中只会有一个全局执行上下文</li>
+<li>函数执行上下文：每当一个函数被调用时, 都会为该函数创建一个新的上下文。每个函数都有它自己的执行上下文，不过是在函数被调用时创建的。函数上下文可以有任意多个。每当一个新的执行上下文被创建，它会按定义的顺序（将在后文讨论）执行一系列步骤。</li>
+<li>val 函数执行上下文 — 执行在 eval 函数内部的代码也会有它属于自己的执行上下文。</li>
+</ul>
+<h3 id="执行栈"><a href="#执行栈" class="headerlink" title="执行栈"></a><a href="#LIFO">执行栈</a></h3><p>&#8194;&#8194;JavaScript管理执行上下文：JS引擎第一次运行代码时，首先会创建一个全局的执行上下文并压入栈顶，当有函数调用时，会为该函数创建一个新的执行上下文并压入栈顶。JS引擎执行位于栈顶的函数，该函数执行结束后执行上下文从栈中弹出，控制流程到达当前栈的下一个上下文。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> a = <span class="string">'Hello World!'</span>;</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">first</span></span>() &#123;</span><br><span class="line">  console.log(<span class="string">'Inside first function'</span>);</span><br><span class="line">  second();</span><br><span class="line">  console.log(<span class="string">'Again inside first function'</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">function</span> <span class="function"><span class="title">second</span></span>() &#123;</span><br><span class="line">  console.log(<span class="string">'Inside second function'</span>);</span><br><span class="line">&#125;</span><br><span class="line">first();</span><br><span class="line">console.log(<span class="string">'Inside Global Execution Context'</span>);</span><br></pre></td></tr></table></figure></p>
+<img src="/2019/01/02/33concepts/concepts_1/img2.png" title="调用栈过程">
+<h3 id="如何创建上下文？"><a href="#如何创建上下文？" class="headerlink" title="如何创建上下文？"></a>如何创建上下文？</h3><p>创建上下文会发生三件事：</p>
+<ol>
+<li><strong>this绑定</strong></li>
+<li>创建<strong>词法环境</strong></li>
+<li>创建<strong>变量环境</strong>组件</li>
+</ol>
+<p><strong>this绑定</strong><br>在全局执行上下文中，this 的值指向全局对象。(在浏览器中，this引用 Window 对象)。<br>在函数执行上下文中，this 的值取决于该函数是如何被调用的。如果它被一个引用对象调用，那么 this 会被设置成那个对象，否则 this 的值被设置为全局对象或者 undefined（在严格模式下）。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> foo = &#123;</span><br><span class="line">  baz: <span class="function"><span class="title">function</span></span>() &#123;</span><br><span class="line">  console.log(this);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">foo.baz();   // <span class="string">'this'</span> 引用 <span class="string">'foo'</span>, 因为 <span class="string">'baz'</span> 被对象 <span class="string">'foo'</span> 调用</span><br><span class="line"><span class="built_in">let</span> bar = foo.baz;</span><br><span class="line">bar();       // <span class="string">'this'</span> 指向全局 window 对象，因为没有指定引用对象</span><br></pre></td></tr></table></figure></p>
+<p><strong>创建词法环境</strong><br>ES6中</p>
+<blockquote>
+<p><strong>词法环境</strong>是一种规范类型，基于 ECMAScript 代码的词法嵌套结构来定义标识符和具体变量和函数的关联。一个词法环境由<strong>环境记录器</strong>和一个可能的引用<strong>外部词法环境的空值</strong>组成。</p>
+</blockquote>
+<p>即词法环境是一种持有<strong>标识符—变量映射</strong>的结构。（这里的<strong>标识符</strong>指的是变量/函数的名字，而<strong>变量</strong>是对实际对象[包含函数类型对象]或原始数据的引用）。</p>
+<p>两个组件：</p>
+<ul>
+<li>环境记录器：存储变量和函数声明的实际位置</li>
+<li>外部词法环境的引用：可以访问其父级词法环境（作用域）</li>
+</ul>
+<p>词法环境的两种类型：</p>
+<ul>
+<li>全局环境（在全局执行上下文中）是没有外部环境引用的词法环境。全局环境的外部环境引用是 null。它拥有内建的 Object/Array/等、在环境记录器内的原型函数（关联全局对象，比如 window 对象）还有任何用户定义的全局变量，并且 this的值指向全局对象。</li>
+<li>在函数环境中，函数内部用户定义的变量存储在环境记录器中。并且引用的外部环境可能是全局环境，或者任何包含此内部函数的外部函数。</li>
+</ul>
+<p>环境记录器也有两种类型：</p>
+<ul>
+<li><strong>对象环境记录器</strong>用来定义出现在全局上下文中的变量和函数的关系–<strong>全局环境</strong></li>
+<li><strong>声明式环境记录器</strong>存储变量、函数和参数–<strong>函数环境</strong><br>对于函数环境，声明式环境记录器还包含了一个传递给函数的<strong>arguments对象</strong>（此对象存储索引和参数的映射）和传递给函数的参数的<strong>length</strong>。</li>
+</ul>
+<p><strong>创建变量环境组件</strong><br>变量环境也是一个词法环境，其环境记录器持有变量声明语句在执行上下文中创建的绑定关系。<br>在 ES6 中，词法环境组件和变量环境的一个不同就是前者被用来存储函数声明和变量（let 和 const）绑定，而后者只用来存储 var 变量绑定。</p>
+<h3 id="顺便说一下var-let-const的区别"><a href="#顺便说一下var-let-const的区别" class="headerlink" title="顺便说一下var let const的区别"></a>顺便说一下var let const的区别</h3><p><strong>var</strong></p>
+<ol>
+<li>变量声明提升,即再var声明之前输出变量不会报错，但会输出undefined。–**已声明并初始化为undefined</li>
+<li>没有块级作用域。但是需注意：var操作符定义的变量将成为定义该变量的作用域中的局部变量。即如果是函数中定义的变量，在函数退出后就会被销毁</li>
+<li>for循环跳出去之后还会存在</li>
+<li>全局下声明的变量为全局对象的属性（）–即<strong>可以通过window.a访问</strong></li>
+<li>可以重定义，但是会被后面的覆盖。</li>
+</ol>
+<p><strong>let</strong></p>
+<ol>
+<li>变量声明不会被提升</li>
+<li>拥有块级作用域</li>
+<li>for循环在每次迭代时都会创建新的绑定</li>
+<li>全局下声明的变量为全局变量而不是全局对象的属性–即<strong>不可以通过window.a访问</strong></li>
+<li>不可以重定义</li>
+</ol>
+<p><strong>const</strong></p>
+<ol>
+<li>用于定义常量</li>
+<li>变量声明不会被提升</li>
+<li>不可以重定义</li>
+<li>声明的时候一定要初始化–即赋值</li>
+<li>不可重新赋值–如果定义的是<strong>对象</strong>，那么可以修改对象的value值，因为此时常量定义的是一个指向该value的指针</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">console.log(<span class="string">'前'</span>,a) // Uncaught ReferenceError: a is not defined</span><br><span class="line">console.log(<span class="string">'前'</span>,b) // Uncaught ReferenceError: b is not defined</span><br><span class="line">console.log(<span class="string">'前'</span>,c) // undefined 声明前置  但还未初始化</span><br><span class="line"><span class="built_in">let</span> a ;</span><br><span class="line">const b = 30,e = &#123;a:<span class="string">'b'</span>&#125;; // 必须初始化</span><br><span class="line">var c ,d= 10;</span><br><span class="line">console.log(a) // undefined</span><br><span class="line">console.log(window.a) // undefined <span class="built_in">let</span>声明的全局变量不是全局对象的属性</span><br><span class="line">console.log(window.d) // 10</span><br><span class="line"><span class="keyword">function</span> multiply(e, f) &#123;</span><br><span class="line">  var g = 20;</span><br><span class="line">  <span class="built_in">return</span> e * f * g;</span><br><span class="line">&#125;</span><br><span class="line">c = multiply(20, 30);</span><br><span class="line">console.log(c)</span><br><span class="line">e = &#123;a:<span class="string">'c'</span>&#125; // Assignment to constant variable.</span><br><span class="line">e.a = <span class="string">'new'</span></span><br><span class="line">console.log(e.a)  // new</span><br></pre></td></tr></table></figure>
+<h2 id="JavaScript-执行机制"><a href="#JavaScript-执行机制" class="headerlink" title="JavaScript 执行机制"></a>JavaScript 执行机制</h2><p>原文链接：<br><a href="https://juejin.im/post/59e85eebf265da430d571f89" target="_blank" rel="noopener">这一次，彻底弄懂 JavaScript 执行机制</a></p>
+<p>要记住，JS是<strong>单线程</strong>语言，js中的多线程是由单线程模拟出来的！</p>
+<h3 id="javascript事件循环"><a href="#javascript事件循环" class="headerlink" title="javascript事件循环"></a>javascript事件循环</h3><p>JS中的任务分为两类：</p>
+<ul>
+<li>同步任务</li>
+<li>异步任务</li>
+</ul>
+<p><div id="flowchart-0" class="flow-chart"></div><br>主线程内的任务执行完毕为空，会去Event Queue读取对应的函数，进入主线程执行。js引擎存在monitoring process进程，会持续不断的检查主线程执行栈是否为空，一旦为空，就会去Event Queue那里检查是否有等待被调用的函数。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> data = [];</span><br><span class="line">$.ajax(&#123;</span><br><span class="line">    url:www.javascript.com,</span><br><span class="line">    data:data,</span><br><span class="line">    success:() =&gt; &#123;</span><br><span class="line">        console.log(<span class="string">'发送成功!'</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br><span class="line">console.log(<span class="string">'代码执行结束'</span>);</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>ajax进入Event Table，注册回调函数success</li>
+<li>执行console.log(‘代码执行结束’)。</li>
+<li>ajax事件完成，回调函数success进入Event Queue。</li>
+<li>主线程任务完成后–即console.log(‘代码执行结束’)执行完成后，从Event Queue读取回调函数success并执行。</li>
+</ul>
+<h3 id="setTimeout"><a href="#setTimeout" class="headerlink" title="setTimeout"></a>setTimeout</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(() =&gt; &#123;</span><br><span class="line">    task()</span><br><span class="line">&#125;,3000)</span><br><span class="line">sleep(10000000)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>task()进入Event Table并注册,计时开始</li>
+<li>执行sleep函数，计时仍在继续</li>
+<li>3秒到了，计时事件timeout完成，task()进入Event Queue，但是sleep还没执行完，继续等待</li>
+<li>sleep终于执行完了，task()终于从Event Queue进入了主线程执行</li>
+</ul>
+<p><strong>setTimeout(fn,0)</strong>指定某个任务在主线程最早可得的空闲时间执行，即只要主线程执行栈内的同步任务全部执行完成，栈为空就马上执行<br>题外话：</p>
+<ul>
+<li>onkeydown - 主要获取和处理当前按下按键</li>
+<li>onkeypress - 主要获取和处理长按键。input.value的值在onkeypress之后更新值，即在onkeyup的时候触发DOM元素的更新</li>
+<li>onkeyup - 触发onkeyup的DOM元素的值在这里已经更新，可以拿到最新的值，所以这里主要处理相关DOM元素的值。<br>关于setTimeout(fn,0)可读一下这篇文章：<br><a href="http://www.cnblogs.com/silin6/p/4333999.html" target="_blank" rel="noopener">JavaScript下的setTimeout(fn,0)意味着什么？</a></li>
+</ul>
+<h3 id="setInterval"><a href="#setInterval" class="headerlink" title="setInterval"></a>setInterval</h3><p>对于setInterval(fn,ms),每过ms秒，会有fn进入Event Queue。一旦setInterval的回调函数fn执行时间超过了延迟时间ms，那么就完全看不出来有时间间隔了</p>
+<h3 id="Promise与process-nextTick-callback"><a href="#Promise与process-nextTick-callback" class="headerlink" title="Promise与process.nextTick(callback)"></a>Promise与process.nextTick(callback)</h3><p>任务有更精细的定义：：</p>
+<ul>
+<li>macro-task(宏任务)：包括整体代码script，setTimeout，setInterval</li>
+<li>micro-task(微任务)：Promise，process.nextTick<br>事件流程图：<br><div id="flowchart-1" class="flow-chart"></div><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">setTimeout(<span class="function"><span class="title">function</span></span>() &#123;</span><br><span class="line">    console.log(<span class="string">'setTimeout'</span>);</span><br><span class="line">&#125;)</span><br><span class="line">new Promise(<span class="keyword">function</span>(resolve) &#123;</span><br><span class="line">    console.log(<span class="string">'promise'</span>);</span><br><span class="line">&#125;).<span class="keyword">then</span>(<span class="function"><span class="title">function</span></span>() &#123;</span><br><span class="line">    console.log(<span class="string">'then'</span>);</span><br><span class="line">&#125;)</span><br><span class="line">console.log(<span class="string">'console'</span>);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<img src="/2019/01/02/33concepts/concepts_1/test3.png" title="结果">
+<ul>
+<li>代码作为宏任务进入主线程</li>
+<li>代码都是从上到下执行，首先遇到<strong>setTimeout</strong>,注册其回调函数后发布到宏任务Event Queue</li>
+<li>遇到Promise，new promise定义的时候会立即执行console.log(‘promise’)，注册回调函数then()发布到微任务Event Queue</li>
+<li>遇到console.log(‘console’)，立即执行</li>
+<li>到此，<strong>整段代码作为一个宏任务执行结束</strong>，按照流程图，查看是否有可执行的微任务？then()函数不可执行是因为new promise立即执行函数里面没有调用回调函数</li>
+<li>第一轮事件循环结束，开始新的宏任务console.log(‘setTimeout’)，立即执行</li>
+<li>结束</li>
+</ul>
+<p><strong>回调函数是作为一个整体进入到Event Queue的</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">Promise.resolve().<span class="keyword">then</span>(()=&gt;&#123;</span><br><span class="line">  console.log(<span class="string">'p1111'</span>);</span><br><span class="line">  Promise.resolve().<span class="keyword">then</span>(()=&gt;&#123;</span><br><span class="line">    console.log(<span class="string">'p2222'</span>);</span><br><span class="line">    setTimeout(()=&gt;&#123; </span><br><span class="line">      console.log(<span class="string">'s55555'</span>) </span><br><span class="line">    &#125;,0)</span><br><span class="line">    Promise.resolve().<span class="keyword">then</span>(()=&gt;&#123; </span><br><span class="line">      console.log(<span class="string">'p3333'</span>) </span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  setTimeout(()=&gt;&#123;</span><br><span class="line">    console.log(<span class="string">'s222'</span>);</span><br><span class="line">    Promise.resolve().<span class="keyword">then</span>(()=&gt;&#123; </span><br><span class="line">      console.log(<span class="string">'p5555'</span>) </span><br><span class="line">    &#125;)</span><br><span class="line">    setTimeout(()=&gt;&#123; </span><br><span class="line">      console.log(<span class="string">'s44444'</span>) </span><br><span class="line">    &#125;,0)</span><br><span class="line">  &#125;,0)</span><br><span class="line"></span><br><span class="line">  setTimeout(()=&gt;&#123;</span><br><span class="line">    console.log(<span class="string">'s3333'</span>);</span><br><span class="line">    Promise.resolve().<span class="keyword">then</span>(()=&gt;&#123;</span><br><span class="line">      console.log(<span class="string">'p6666'</span>) </span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;,0)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">setTimeout(()=&gt;&#123;</span><br><span class="line">  console.log(<span class="string">'s11'</span>);</span><br><span class="line">  Promise.resolve().<span class="keyword">then</span>(()=&gt;&#123; </span><br><span class="line">    console.log(<span class="string">'p4444'</span>) </span><br><span class="line">  &#125;)</span><br><span class="line">&#125;,0)</span><br><span class="line">console.log(<span class="string">'-=-=-=-=-'</span>)</span><br></pre></td></tr></table></figure></p>
+<img src="/2019/01/02/33concepts/concepts_1/test4.png" title="谷歌浏览器">
+<img src="/2019/01/02/33concepts/concepts_1/test5.png" title="Node">
+<p><strong>node环境下的事件监听依赖libuv与前端环境不完全相同，输出顺序可能会有误差</strong></p>
+<p>Github地址：<strong><a href="https://github.com/stephentian/33-js-concepts" target="_blank" rel="noopener">每个 JavaScript 工程师都应懂的33个概念</a></strong></p>
+<p><img src="/images/wechat.jpg" alt="image"><script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script><textarea id="flowchart-0-code" style="display: none">st=>start: 任务进入执行栈
+cond=>condition: 同步
+op1=>operation: 任务进入主线程
+op2=>operation: 已进入主线程的任务全部执行完毕
+op3=>operation: 异步事件进入Event Table并注册回调函数
+op4=>operation: 异步事件完成,回调函数进入Event Queue
+e=>end: 读取任务队列中的结果，进入主线程执行
+st->cond
+cond(yes)(left)->op1->op2->e
+cond(no)(right)->op3->op4->e</textarea><textarea id="flowchart-0-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-0-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-0-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-0", options);</script><textarea id="flowchart-1-code" style="display: none">st=>start: 宏任务
+op1=>operation: 执行结束
+op2=>operation: 执行所有微任务
+cond=>condition: 有可执行的微任务吗？
+e=>end: 开始新的宏任务
+st->op1->cond
+cond(yes)(left)->op2->e
+cond(no)(right)->e</textarea><textarea id="flowchart-1-options" style="display: none">{"scale":1,"line-width":2,"line-length":50,"text-margin":10,"font-size":12}</textarea><script>  var code = document.getElementById("flowchart-1-code").value;  var options = JSON.parse(decodeURIComponent(document.getElementById("flowchart-1-options").value));  var diagram = flowchart.parse(code);  diagram.drawSVG("flowchart-1", options);</script></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/33concepts/" rel="tag"># 33concepts</a>
+          
+            <a href="/tags/JS/" rel="tag"># JS</a>
+          
+            <a href="/tags/v8/" rel="tag"># v8</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/31/basicJS/" rel="next" title="基础总结">
+                <i class="fa fa-chevron-left"></i> 基础总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/05/compatibility/" rel="prev" title="兼容性问题收集">
+                兼容性问题收集 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div id="gitalk-container"></div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Silvia Xu">
+            
+              <p class="site-author-name" itemprop="name">Silvia Xu</p>
+              <p class="site-description motion-element" itemprop="description">人们通常只会跟你说要学会把握机会，不会告诉你什么是机会。那么我说你的能力决定了你的机会，你想走多远就应该具备与之匹配的能力。时刻保持把握机会的能力，才能让自己立于不败之地！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Oldpost" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JavaScript-如何工作？"><span class="nav-number">1.</span> <span class="nav-text">JavaScript 如何工作？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JavaScript-引擎-V8引擎"><span class="nav-number">1.1.</span> <span class="nav-text">JavaScript 引擎 (V8引擎)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#运行时浏览器使用的API"><span class="nav-number">1.2.</span> <span class="nav-text">运行时浏览器使用的API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调用栈-LIFO-后进先出"><span class="nav-number">1.3.</span> <span class="nav-text">调用栈(LIFO 后进先出)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#并发与事件循环"><span class="nav-number">1.4.</span> <span class="nav-text">并发与事件循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要创建-V8-引擎"><span class="nav-number">1.5.</span> <span class="nav-text">为什么要创建 V8 引擎?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#理解JavaScript中的执行上下文和执行栈"><span class="nav-number">2.</span> <span class="nav-text">理解JavaScript中的执行上下文和执行栈</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#执行上下文的类型"><span class="nav-number">2.1.</span> <span class="nav-text">执行上下文的类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行栈"><span class="nav-number">2.2.</span> <span class="nav-text">执行栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何创建上下文？"><span class="nav-number">2.3.</span> <span class="nav-text">如何创建上下文？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顺便说一下var-let-const的区别"><span class="nav-number">2.4.</span> <span class="nav-text">顺便说一下var let const的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JavaScript-执行机制"><span class="nav-number">3.</span> <span class="nav-text">JavaScript 执行机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#javascript事件循环"><span class="nav-number">3.1.</span> <span class="nav-text">javascript事件循环</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setTimeout"><span class="nav-number">3.2.</span> <span class="nav-text">setTimeout</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setInterval"><span class="nav-number">3.3.</span> <span class="nav-text">setInterval</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Promise与process-nextTick-callback"><span class="nav-number">3.4.</span> <span class="nav-text">Promise与process.nextTick(callback)</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Silvia Xu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '994262d31968df240079',
+          clientSecret: 'fb4240685c36949113b17be3c073b0b478a4af5b',
+          repo: 'Oldpost.github.io',
+          owner: 'Oldpost',
+          admin: ['Oldpost'],
+          id: location.pathname, // Ensure uniqueness and length less than 50
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("1DzyeOLsmVCuXnpBwpl2iE78-gzGzoHsz", "yVsgLwLpOL2IM42aHSnsLKa4");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":200,"height":200},"mobile":{"show":true},"log":false});</script></body>
+</html>

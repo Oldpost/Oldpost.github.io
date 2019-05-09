@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JS,跨域,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="XMLKttpRequest对象–Ajax的核心使用 创建 1let xhr = new XMLHttpRequest();  要调用的第一个方法open()，接收3个参数：要发送的请求的类型、请求的URL以及表示是否异步发送请求的布尔值(非必须) 123let xhr = new XMLHttpRequest();let host = location.href.split(&apos;/&apos;)[0];xh">
+<meta name="keywords" content="JS,跨域">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ajax 与 跨域请求">
+<meta property="og:url" content="http://Oldpost.github.io/2019/02/21/JS/XHR/index.html">
+<meta property="og:site_name" content="梵唱 | MC">
+<meta property="og:description" content="XMLKttpRequest对象–Ajax的核心使用 创建 1let xhr = new XMLHttpRequest();  要调用的第一个方法open()，接收3个参数：要发送的请求的类型、请求的URL以及表示是否异步发送请求的布尔值(非必须) 123let xhr = new XMLHttpRequest();let host = location.href.split(&apos;/&apos;)[0];xh">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://oldpost.github.io/2019/02/21/JS/XHR/header.png">
+<meta property="og:image" content="http://oldpost.github.io/images/wechat.jpg">
+<meta property="og:updated_time" content="2019-05-07T03:15:52.601Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ajax 与 跨域请求">
+<meta name="twitter:description" content="XMLKttpRequest对象–Ajax的核心使用 创建 1let xhr = new XMLHttpRequest();  要调用的第一个方法open()，接收3个参数：要发送的请求的类型、请求的URL以及表示是否异步发送请求的布尔值(非必须) 123let xhr = new XMLHttpRequest();let host = location.href.split(&apos;/&apos;)[0];xh">
+<meta name="twitter:image" content="http://oldpost.github.io/2019/02/21/JS/XHR/header.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://Oldpost.github.io/2019/02/21/JS/XHR/">
+
+
+
+
+
+  <title>Ajax 与 跨域请求 | 梵唱 | MC</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d5cc3f72952807fe78b0435e68473f4d";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">梵唱 | MC</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">脚踏实地，自强不息</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+<div id="hitokoto" style="
+    text-align: center;
+    padding-top: 25px;
+"></div>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://Oldpost.github.io/2019/02/21/JS/XHR/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Silvia Xu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="梵唱 | MC">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Ajax 与 跨域请求</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-21T17:06:51+08:00">
+                2019-02-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/红皮书笔记-《JavaScript高级程序设计》/" itemprop="url" rel="index">
+                    <span itemprop="name">红皮书笔记--《JavaScript高级程序设计》</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/02/21/JS/XHR/" class="leancloud_visitors" data-flag-title="Ajax 与 跨域请求">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="XMLKttpRequest对象–Ajax的核心"><a href="#XMLKttpRequest对象–Ajax的核心" class="headerlink" title="XMLKttpRequest对象–Ajax的核心"></a>XMLKttpRequest对象–Ajax的核心</h2><h3 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h3><ol>
+<li><p>创建</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> xhr = new XMLHttpRequest();</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>要调用的第一个方法open()，接收3个参数：要发送的请求的类型、请求的URL以及表示是否异步发送请求的布尔值(非必须)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> xhr = new XMLHttpRequest();</span><br><span class="line"><span class="built_in">let</span> host = location.href.split(<span class="string">'/'</span>)[0];</span><br><span class="line">xhr.open(<span class="string">'get'</span>,host+<span class="string">'/message.json'</span>,<span class="literal">false</span>);</span><br></pre></td></tr></table></figure>
+<p>URL相对于执行代码的当前页面，也可以是绝对路径，调用open()并不会真正的发送请求，而是启动一个请求以备发送</p>
+</li>
+<li><p>send()方法：发送特定的请求，接受1个参数，即作为请求主体发送的数据，没有数据发送时需传null</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> xhr = new XMLHttpRequest();</span><br><span class="line"><span class="built_in">let</span> host = location.href.split(<span class="string">'/'</span>)[0];</span><br><span class="line">xhr.open(<span class="string">'get'</span>,host+<span class="string">'/message.json'</span>,<span class="literal">false</span>);</span><br><span class="line">xhr.send(null);</span><br><span class="line">console.log(<span class="string">'data'</span>,xhr);</span><br></pre></td></tr></table></figure>
+<p>当收到响应之后，相应的数据会自动填充xhr对象的属性</p>
+<blockquote>
+<p>返回的数据：<div id="xhr"></div></p>
+</blockquote>
+<p>其中</p>
+<ul>
+<li>responseText：作为相应主体被返回的文本</li>
+<li>responseXML：如果响应内容是”text/xml”或”application/xml”，这个属性中将包含着响应数据的XML DOM文档</li>
+<li>status：响应状态</li>
+<li>statusText：响应状态说明</li>
+<li>readyState：请求/响应过程的当前活动阶段，这个属性取值如下：<ul>
+<li>0：未初始化–尚未调用open()</li>
+<li>1：启动–已调用open()还未调用send()</li>
+<li>2：发送–已调用send()还未收到响应</li>
+<li>3：接收–已收到部分响应</li>
+<li>4：完成–已接收到全部数据，并且可以在客户端使用</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>当请求为异步请求时，可以通过检测readyState属性的值来做下一步动作。每次readyState属性值的改变都会触发一次onreadystatechange事件<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> createElement(&#123;id,data&#125;) &#123;</span><br><span class="line">  <span class="built_in">let</span> div = document.getElementById(id);</span><br><span class="line">  <span class="keyword">if</span>(typeof data == <span class="string">'object'</span>)&#123;</span><br><span class="line">    <span class="keyword">for</span> (const key <span class="keyword">in</span> data) &#123;</span><br><span class="line">      <span class="built_in">let</span> span=document.createElement(<span class="string">'span'</span>);</span><br><span class="line">      span.style.display=<span class="string">'block'</span>;</span><br><span class="line">      span.innerHTML = `&lt;span style=<span class="string">"color:#000;font-weight:bold"</span>&gt;<span class="variable">$&#123;key&#125;</span>: &lt;/span&gt;<span class="variable">$&#123;data[key]&#125;</span>`;</span><br><span class="line">      div.appendChild(span);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">let</span> xhr = new XMLHttpRequest();</span><br><span class="line">xhr.onreadystatechange = <span class="function"><span class="title">function</span></span> () &#123;</span><br><span class="line">  <span class="keyword">if</span>(xhr.readyState === 4)&#123;</span><br><span class="line">    <span class="keyword">if</span>((xhr.status&gt;=200 &amp;&amp; xhr.status&lt;300) || xhr.status == 304)&#123;</span><br><span class="line">      createElement(&#123;</span><br><span class="line">        id: <span class="string">'xhr'</span>,</span><br><span class="line">        data: xhr</span><br><span class="line">      &#125;)</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      alert(<span class="string">'Request was unsuccessful'</span>+xhr.status);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="built_in">let</span> host = location.href.split(<span class="string">'/'</span>)[0];</span><br><span class="line">xhr.open(<span class="string">'get'</span>, host + <span class="string">'/XHRTest.json'</span>, <span class="literal">false</span>);</span><br><span class="line">xhr.send(null);</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="HTTP头部信息"><a href="#HTTP头部信息" class="headerlink" title="HTTP头部信息"></a>HTTP头部信息</h3><p>在发送XHR请求的和收到响应时会带有下列头部信息，其中Request Headers为请求头信息，Response Headers为响应头信息<br><img src="/2019/02/21/JS/XHR/header.png"><br>Response Headers：</p>
+<ul>
+<li>Accept: 浏览器能够处理的内容类型</li>
+<li>Accept-Charset 浏览器能够显示的字符集</li>
+<li>Accept-Encoding: 浏览器能够显示的压缩编码</li>
+<li>Accept-Language: 浏览器当前设置的语言</li>
+<li>Connection: 浏览器与服务器之间连接的类型</li>
+<li>Cookie: 当前页面设置的任何cookie</li>
+<li>Host: 发送请求的页面所在区域</li>
+<li>Referer: 发送请求的页面URL</li>
+<li>User-Agent: 浏览器的用户代理字符串</li>
+</ul>
+<p>setRequestHeader()可以设置自定义请求头部信息，接收2个参数：头部字段的名称和头部字段的值。该方法需要在open()和send()之间调用<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">xhr.open(<span class="string">'get'</span>, host + <span class="string">'/XHRTest.json'</span>, <span class="literal">false</span>);</span><br><span class="line">xhr.setRequestHeader(<span class="string">'MyHeader'</span>, <span class="string">'MyValue'</span>);</span><br><span class="line">xhr.send(null);</span><br></pre></td></tr></table></figure></p>
+<p>getResponseHeader()方法可以传入头部字段以获取改头部字段名称<br>getAllResponseHeaders()可以获取一个包含所有头部信息的字符串<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">xhr.onreadystatechange = <span class="function"><span class="title">function</span></span> () &#123;</span><br><span class="line">  <span class="keyword">if</span>(xhr.readyState === 4)&#123;</span><br><span class="line">    <span class="keyword">if</span>((xhr.status&gt;=200 &amp;&amp; xhr.status&lt;300) || xhr.status == 304)&#123;</span><br><span class="line">      createElement(&#123;</span><br><span class="line">        id: <span class="string">'xhr'</span>,</span><br><span class="line">        data: xhr</span><br><span class="line">      &#125;);</span><br><span class="line">      <span class="built_in">let</span> MyHeader = xhr.getResponseHeader(<span class="string">'MyHeader'</span>);</span><br><span class="line">      createElement(&#123;</span><br><span class="line">        id: <span class="string">'myHeader'</span>,</span><br><span class="line">        data: &#123;MyHeader&#125;</span><br><span class="line">      &#125;);</span><br><span class="line">      <span class="built_in">let</span> allHeaders = xhr.getAllResponseHeaders();</span><br><span class="line">      createElement(&#123;</span><br><span class="line">        id: <span class="string">'allHeaders'</span>,</span><br><span class="line">        data: &#123;allHeaders&#125;</span><br><span class="line">      &#125;);</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">      alert(<span class="string">'Request was unsuccessful'</span>+xhr.status);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>返回数据<div id="myHeader"></div><div id="allHeaders"></div></p>
+</blockquote>
+<h3 id="GET和POST请求"><a href="#GET和POST请求" class="headerlink" title="GET和POST请求"></a>GET和POST请求</h3><p>关于GET和POST请求 可以看看这篇文章<a href="https://sunshinevvv.coding.me/blog/2017/02/09/HttpGETv.s.POST/" target="_blank" rel="noopener">HTTP协议中GET和POST方法的区别</a><br>总结如下：</p>
+<ul>
+<li>参数的位置：GET请求的参数通过URL传递，POST通过body传递</li>
+<li>缓存：GET可缓存，POST(大部分)不可缓存</li>
+<li>安全：对于服务器来说GET比POST安全，因为POST会对资源作出处理，对于传输POST比GET安全，因为GET的参数直接暴露在URL中</li>
+<li>GET的长度是受限制：HTTP协议并没有限制URI的长度，具体的长度是由浏览器和系统来约束的(GET请求)</li>
+<li>GET和POST本质上都是是<strong>TCP链接</strong></li>
+<li>语义上的区别：<strong>GET的语义就是请求获取指定的资源，POST的语义是请求负荷（报文主体）对指定的资源做出处理</strong><br>对于<strong>GET产生一个TCP数据包；POST产生两个TCP数据包</strong>这句话：对于GET方式的请求，浏览器会把http header和data一并发送出去，服务器响应200（返回数据）； 而对于POST，浏览器先发送header，服务器响应100 continue，浏览器再发送data，服务器响应200 ok（返回数据）。HTTP 协议中没有明确说明 POST 会产生两个 TCP 数据包，100 continue 只有在请求里带了Expect: 100-continueheader 的时候才有意义。</li>
+</ul>
+<h2 id="XMLHttpRequest-2级"><a href="#XMLHttpRequest-2级" class="headerlink" title="XMLHttpRequest 2级"></a>XMLHttpRequest 2级</h2><h2 id="FormData"><a href="#FormData" class="headerlink" title="FormData"></a>FormData</h2><p>创建一个FormData对象并向其中添加一些数据<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> data = new FormData();</span><br><span class="line">data.append(<span class="string">'name'</span>,<span class="string">'Silvia'</span>);</span><br><span class="line">// 或者</span><br><span class="line"><span class="built_in">let</span> data = new FormData(document.form[0]);</span><br></pre></td></tr></table></figure></p>
+<p>创建了FormData的实例之后可以将它直接传给send()</p>
+<h3 id="超时设定"><a href="#超时设定" class="headerlink" title="超时设定"></a>超时设定</h3><p>XHR对象有一个timeout属性，表示请求在等待响应多少毫秒之后终止，如果在规定时间内没有响应，则会触发timeout事件进而调用ontimeout()事件处理程序<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">xhr.open(<span class="string">'get'</span>, host + <span class="string">'/XHRTest.json'</span>, <span class="literal">false</span>);</span><br><span class="line">xhr.timeout = 1000;</span><br><span class="line">xhr.ontimeout = <span class="function"><span class="title">function</span></span>()&#123;</span><br><span class="line">  alert(<span class="string">'Request did not return in a second'</span>);</span><br><span class="line">&#125;</span><br><span class="line">xhr.send(null);</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>timeout只能在异步情况下设置，否则会报错：(index):526 Uncaught DOMException: Failed to set the ‘timeout’ property on ‘XMLHttpRequest’: Timeouts cannot be set for synchronous requests made from a document.</p>
+</blockquote>
+<h2 id="跨域"><a href="#跨域" class="headerlink" title="跨域"></a>跨域</h2><p>详情请看<a href="https://github.com/ljianshu/Blog/issues/55" target="_blank" rel="noopener">九种跨域方式实现原理（完整版）</a></p>
+<h3 id="同源策略"><a href="#同源策略" class="headerlink" title="同源策略"></a>同源策略</h3><p>同源指协议+域名+端口必须相同，否则非同源。目的是为了防止浏览器受到XSS、CSFR 等攻击，提高安全性</p>
+<ol>
+<li>如果是协议和端口造成的跨域问题“前台”是无能为力的。</li>
+<li>在跨域问题上，仅仅是通过“URL 的首部”来识别而不会根据域名对应的 IP 地址是否相同来判断。“URL 的首部”可以理解为“协议, 域名和端口必须匹配”</li>
+<li>跨域并不是请求发不出去，请求能发出去，服务端能收到请求并正常返回结果，只是结果被浏览器拦截了</li>
+<li>三个标签是允许跨域加载资源：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&lt;img src=XXX&gt;</span><br><span class="line">&lt;link href=XXX&gt;</span><br><span class="line">&lt;script src=XXX&gt;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h3 id="跨域解决方案一-JSONP"><a href="#跨域解决方案一-JSONP" class="headerlink" title="跨域解决方案一 JSONP"></a>跨域解决方案一 JSONP</h3><ul>
+<li><strong>原理：</strong>利用 script 标签没有跨域限制的漏洞，网页可以得到从其他来源动态产生的 JSON 数据。</li>
+<li><strong>实现过程：</strong>首先需要声明一个请求成功后的回调函数，其参数为请求返回的数据。创建一个script标签，src地址为<strong>跨域请求地址?callback=声明的回调函数名</strong>。服务器收到请求后，将请求的数据当做回调函数的参数并以字符串形式返回<strong>回调函数的调用</strong>。eg: res.end(<code>${callback}(&#39;我不爱你&#39;)</code>);</li>
+<li><strong>特点：</strong>JSONP 都是 GET 和异步请求的，不存在其他的请求方式和同步请求，且 jQuery 默认就会给 JSONP 的请求清除缓存</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> jsonp(&#123; url, params, callback &#125;) &#123;</span><br><span class="line">  <span class="built_in">return</span> new Promise((resolve, reject) =&gt;&#123;</span><br><span class="line">    <span class="built_in">let</span> script = document.createElement(<span class="string">'script'</span>);</span><br><span class="line">    window[callback] = <span class="keyword">function</span>(data) &#123;</span><br><span class="line">      resolve(data)</span><br><span class="line">      document.body.removeChild(script);</span><br><span class="line">    &#125;</span><br><span class="line">    params = &#123; ...params, callback &#125;; // wd=b&amp;callback=show</span><br><span class="line">    <span class="built_in">let</span> arrs = [];</span><br><span class="line">    <span class="keyword">for</span> (<span class="built_in">let</span> key <span class="keyword">in</span> params) &#123;</span><br><span class="line">      arrs.push(`<span class="variable">$&#123;key&#125;</span>=<span class="variable">$&#123;params[key]&#125;</span>`);</span><br><span class="line">    &#125;</span><br><span class="line">    script.src = `<span class="variable">$&#123;url&#125;</span>?<span class="variable">$&#123;arrs.join('&amp;')&#125;</span>`</span><br><span class="line">    document.body.appendChild(script);</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line">jsonp(&#123;</span><br><span class="line">url: <span class="string">'https://blog.silviaxu.com/crossSite.js'</span>,</span><br><span class="line">  params: &#123; wd: <span class="string">'Iloveyou'</span> &#125;,</span><br><span class="line">  callback: <span class="string">'show'</span></span><br><span class="line">&#125;).<span class="keyword">then</span>((data) =&gt;&#123;</span><br><span class="line">  console.log(data);</span><br><span class="line">&#125;).catch((errror)=&gt;&#123;</span><br><span class="line">  console.log(errror)</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>请自行将代码拷贝下来运行，结果可打开控制台</p>
+<h3 id="跨域解决方案一-cors"><a href="#跨域解决方案一-cors" class="headerlink" title="跨域解决方案一 cors"></a>跨域解决方案一 cors</h3><p><strong>CORS 需要浏览器和后端同时支持。</strong>IE 8 和 9 需要通过 XDomainRequest 来实现。实现 CORS 通信的关键是后端。只要后端实现了 CORS，就实现了跨域。服务端设置 Access-Control-Allow-Origin 就可以开启 CORS。 该属性表示哪些域名可以访问资源，如果设置通配符则表示所有网站都可以访问资源。CORS分为简单请求和复杂请求</p>
+<h4 id="简单请求"><a href="#简单请求" class="headerlink" title="简单请求"></a>简单请求</h4><p>满足条件：</p>
+<ol>
+<li>使用下列方法之一：GET/HEAD/POST</li>
+<li>Content-Type 的值仅限于下列三者之一: application/x-www-form-urlencoded 、multipart/form-data 、text/plain</li>
+</ol>
+<p>简单请求流程：</p>
+<ul>
+<li>当浏览器发送CORS请求时发现是简单请求，会在请求的头部信息里添加一个Origin(协议+域名+端口)字段，表明请求源，服务器根据这个源判断是否允许这次请求</li>
+<li>如果Origin的value在许可范围内，则请求成功，服务器会在响应header里多增加几个字段：Access-Control-Allow-Origin和Access-Control-Allow-Credentials字段<blockquote>
+<p>Access-Control-Allow-Credentials：表示是否允许发送cookie。当该属性值为true时，浏览器应该设置xhr.withCredentials = true;</p>
+</blockquote>
+</li>
+<li>如果Origin的value不在许可范围内，则请求失败,服务器会返回一个正常的HTTP回应。浏览器发现，这个回应的头信息没有包含Access-Control-Allow-Origin字段，从而抛出一个无法跨域的异常（可能是200，所以无法识别）</li>
+</ul>
+<h4 id="复杂请求"><a href="#复杂请求" class="headerlink" title="复杂请求"></a>复杂请求</h4><p>满足条件：使用Put，Delete方法或者Content-Type是application/json<br>复杂请求流程：</p>
+<ul>
+<li><p>在发送CORS请求之前会先发送一个预检请求(OPTIONS请求),服务器也会做出相应的响应，请求成功则进入下一步请求</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">OPTIONS /cors HTTP/1.1</span><br><span class="line">Origin: http://localhost:4000</span><br><span class="line">Access-Control-Request-Method: PUT</span><br><span class="line">Access-Control-Request-Headers: token  // 额外发送的头信息字段</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>预检请求其实是服务器的一种权限请求，一般缓存下来，以便不需要在每次请求都发送</p>
+</blockquote>
+</li>
+<li>预检请求通过以后，浏览器发每次出的CORS请求就和简单请求一样，会有一个origin字段，服务器每次回应都会有Access-Control-Allow-Origin头信息字段</li>
+</ul>
+<p>一个复杂请求案例<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">// 前端</span><br><span class="line"><span class="built_in">let</span> xhr = new XMLHttpRequest()</span><br><span class="line">document.cookie = <span class="string">'name=xiamen'</span> // cookie不能跨域</span><br><span class="line">xhr.withCredentials = <span class="literal">true</span> // 前端设置是否带cookie</span><br><span class="line">xhr.open(<span class="string">'PUT'</span>, <span class="string">'http://localhost:4000/getData'</span>, <span class="literal">true</span>)</span><br><span class="line">xhr.setRequestHeader(<span class="string">'name'</span>, <span class="string">'xiamen'</span>)</span><br><span class="line">xhr.onreadystatechange = <span class="function"><span class="title">function</span></span>() &#123;</span><br><span class="line">  <span class="keyword">if</span> (xhr.readyState === 4) &#123;</span><br><span class="line">    <span class="keyword">if</span> ((xhr.status &gt;= 200 &amp;&amp; xhr.status &lt; 300) || xhr.status === 304) &#123;</span><br><span class="line">      console.log(xhr.response)</span><br><span class="line">      //得到响应头，后台需设置Access-Control-Expose-Headers</span><br><span class="line">      console.log(xhr.getResponseHeader(<span class="string">'name'</span>))</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">xhr.send()</span><br><span class="line">// 后端</span><br><span class="line"><span class="built_in">let</span> express = require(<span class="string">'express'</span>)</span><br><span class="line"><span class="built_in">let</span> app = express()</span><br><span class="line"><span class="built_in">let</span> whitList = [<span class="string">'http://localhost:3000'</span>] //设置白名单</span><br><span class="line">app.use(<span class="keyword">function</span>(req, res, next) &#123;</span><br><span class="line">  <span class="built_in">let</span> origin = req.headers.origin</span><br><span class="line">  <span class="keyword">if</span> (whitList.includes(origin)) &#123;</span><br><span class="line">    // 设置哪个源可以访问我</span><br><span class="line">    res.setHeader(<span class="string">'Access-Control-Allow-Origin'</span>, origin)</span><br><span class="line">    // 允许携带哪个头访问我</span><br><span class="line">    res.setHeader(<span class="string">'Access-Control-Allow-Headers'</span>, <span class="string">'name'</span>)</span><br><span class="line">    // 允许哪个方法访问我</span><br><span class="line">    res.setHeader(<span class="string">'Access-Control-Allow-Methods'</span>, <span class="string">'PUT'</span>)</span><br><span class="line">    // 允许携带cookie </span><br><span class="line">    res.setHeader(<span class="string">'Access-Control-Allow-Credentials'</span>, <span class="literal">true</span>)</span><br><span class="line">    // 预检的存活时间</span><br><span class="line">    res.setHeader(<span class="string">'Access-Control-Max-Age'</span>, 6)</span><br><span class="line">    // 允许返回的头 该项确定 xmlHttpRequest 对象当中 getResponseHeader()方法所能获得的额外信息</span><br><span class="line">    res.setHeader(<span class="string">'Access-Control-Expose-Headers'</span>, <span class="string">'name'</span>)</span><br><span class="line">    <span class="keyword">if</span> (req.method === <span class="string">'OPTIONS'</span>) &#123;</span><br><span class="line">      res.end() // OPTIONS请求不做任何处理</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  next()</span><br><span class="line">&#125;)</span><br><span class="line">app.put(<span class="string">'/getData'</span>, <span class="keyword">function</span>(req, res) &#123;</span><br><span class="line">  console.log(req.headers)</span><br><span class="line">  res.setHeader(<span class="string">'name'</span>, <span class="string">'jw'</span>) //返回一个响应头，后台需设置</span><br><span class="line">  res.end(<span class="string">'我不爱你'</span>)</span><br><span class="line">&#125;)</span><br><span class="line">app.get(<span class="string">'/getData'</span>, <span class="keyword">function</span>(req, res) &#123;</span><br><span class="line">  console.log(req.headers)</span><br><span class="line">  res.end(<span class="string">'我不爱你'</span>)</span><br><span class="line">&#125;)</span><br><span class="line">app.use(express.static(__dirname))</span><br><span class="line">app.listen(4000)</span><br></pre></td></tr></table></figure></p>
+<h3 id="跨域解决方案一-postMessage"><a href="#跨域解决方案一-postMessage" class="headerlink" title="跨域解决方案一 postMessage"></a>跨域解决方案一 postMessage</h3><p>应用场景：</p>
+<ul>
+<li>页面和其打开的新窗口的数据传递</li>
+<li>多窗口之间消息传递</li>
+<li>页面与嵌套的iframe消息传递</li>
+<li>上面三个场景的跨域数据传递</li>
+</ul>
+<p>语法：postMessage(message, targetOrigin, [transfer])方法：</p>
+<ul>
+<li>message: 将要发送到其他 window的数据。</li>
+<li>targetOrigin:通过窗口的origin属性来指定哪些窗口能接收到消息事件，其值可以是字符串”*”（表示无限制）或者一个URI。在发送消息的时候，如果目标窗口的协议、主机地址或端口这三者的任意一项不匹配targetOrigin提供的值，那么消息就不会被发送；只有三者完全匹配，消息才会被发送。</li>
+<li>transfer(可选)：是一串和message 同时传递的 Transferable 对象. 这些对象的所有权将被转移给消息的接收方，而发送一方将不再保有所有权。</li>
+</ul>
+<p>eg:a.html向b.html发送数据并接收返回数据，</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">// a.html</span><br><span class="line">&lt;iframe src=<span class="string">"http://localhost:4000/b.html"</span> frameborder=<span class="string">"0"</span> id=<span class="string">"frame"</span> onload=<span class="string">"load()"</span>&gt;&lt;/iframe&gt; //等它加载完触发一个事件</span><br><span class="line">//内嵌在http://localhost:3000/a.html</span><br><span class="line">&lt;script&gt;</span><br><span class="line">  <span class="keyword">function</span> <span class="function"><span class="title">load</span></span>() &#123;</span><br><span class="line">    <span class="built_in">let</span> frame = document.getElementById(<span class="string">'frame'</span>)</span><br><span class="line">    frame.contentWindow.postMessage(<span class="string">'我爱你'</span>, <span class="string">'http://localhost:4000'</span>) //发送数据</span><br><span class="line">    window.onmessage = <span class="keyword">function</span>(e) &#123; //接受返回数据</span><br><span class="line">      console.log(e.data) //我不爱你</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">// b.html</span><br><span class="line">window.onmessage = <span class="keyword">function</span>(e) &#123;</span><br><span class="line">  console.log(e.data) //我爱你</span><br><span class="line">  e.source.postMessage(<span class="string">'我不爱你'</span>, e.origin)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="跨域解决方案一-websocket"><a href="#跨域解决方案一-websocket" class="headerlink" title="跨域解决方案一 websocket"></a>跨域解决方案一 websocket</h3><p>Websocket是HTML5的一个持久化的协议，它实现了浏览器与服务器的全双工通信，同时也是跨域的一种解决方案。。一般使用 sockit.io</p>
+<h3 id="跨域解决方案一-Node中间件代理-两次跨域"><a href="#跨域解决方案一-Node中间件代理-两次跨域" class="headerlink" title="跨域解决方案一 Node中间件代理(两次跨域)"></a>跨域解决方案一 Node中间件代理(两次跨域)</h3><p>同源策略是浏览器需要遵循的标准，而如果是服务器向服务器请求就无需遵循同源策略<br>实现过程：</p>
+<ul>
+<li>代理服务器接受客户端请求 。</li>
+<li>代理服务器将请求转发给服务器。</li>
+<li>代理服务器拿到服务器响应数据。</li>
+<li>代理服务器将响应转发给客户端。</li>
+</ul>
+<h3 id="跨域解决方案一-nginx反向代理"><a href="#跨域解决方案一-nginx反向代理" class="headerlink" title="跨域解决方案一 nginx反向代理"></a>跨域解决方案一 nginx反向代理</h3><p>实现原理类似于Node中间件代理，需要搭建一个中转nginx服务器，用于转发请求。使用nginx反向代理实现跨域，是最简单的跨域方式。只需要修改nginx的配置即可解决跨域问题，支持所有浏览器，支持session，不需要修改任何代码，并且不会影响服务器性能<br>原理：通过nginx配置一个代理服务器（域名与domain1相同，端口不同）做跳板机，反向代理访问domain2接口，并且可以顺便修改cookie中domain信息，方便当前域cookie写入，实现跨域登录</p>
+<h3 id="跨域解决方案一-window-name-iframe"><a href="#跨域解决方案一-window-name-iframe" class="headerlink" title="跨域解决方案一 window.name + iframe"></a>跨域解决方案一 window.name + iframe</h3><p>通过iframe的src属性由外域转向本地域，跨域数据即由iframe的window.name从外域传递到本地域。这个就巧妙地绕过了浏览器的跨域访问限制，但同时它又是安全操作。</p>
+<h3 id="跨域解决方案一-location-hash-iframe"><a href="#跨域解决方案一-location-hash-iframe" class="headerlink" title="跨域解决方案一 location.hash + iframe"></a>跨域解决方案一 location.hash + iframe</h3><p>a.html欲与c.html跨域相互通信，通过中间页b.html来实现。 三个页面，不同域之间利用iframe的location.hash传值，相同域之间直接js访问来通信。</p>
+<h3 id="跨域解决方案一-document-domain-iframe"><a href="#跨域解决方案一-document-domain-iframe" class="headerlink" title="跨域解决方案一 document.domain + iframe"></a>跨域解决方案一 document.domain + iframe</h3><p><strong>只能用于二级域名相同的情况下，比如 <code>a.test.com</code> 和 <code>b.test.com</code> 适用于该方式</strong>。只需要给页面添加 <code>document.domain =&#39;test.com&#39;</code> 表示二级域名都相同就可以实现跨域。<br>实现原理：两个页面都通过js强制设置document.domain为基础主域，就实现了同域。</p>
+<script>
+function createElement({id,data}) {
+  let div = document.getElementById(id);
+  if(typeof data == 'object'){
+    for (const key in data) {
+      let span=document.createElement('span');
+      span.style.display='block';
+      span.innerHTML = `<span style="color:#000;font-weight:bold">${key}: </span>${data[key]}`;
+      div.appendChild(span);
+    }
+  }else if(data){
+    let span=document.createElement('p');
+    span.innerHTML = `${data}`;
+    div.appendChild(span);
+  }
+}
+let xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function () {
+  try{
+    if (xhr.readyState === 4) {
+      if ((xhr.status>=200 && xhr.status<300) || xhr.status == 304){
+        createElement({
+          id: 'xhr',
+          data: xhr
+        });
+        let MyHeader = xhr.getResponseHeader('MyHeader');
+        createElement({
+          id: 'myHeader',
+          data: {MyHeader}
+        });
+        let allHeaders = xhr.getAllResponseHeaders();
+        createElement({
+          id: 'allHeaders',
+          data: {allHeaders}
+        });
+      } else {
+        alert('Request was unsuccessful'+xhr.status);
+      }
+    }
+  } catch (ex){
+
+  }
+}
+let host = location.href.split('/')[0];
+xhr.open('get', host + '/XHRTest.json', true);
+xhr.setRequestHeader('MyHeader', 'MyValue');
+xhr.timeout = 1000;
+xhr.ontimeout = function(){
+  alert('Request did not return in a second');
+}
+xhr.send(null);
+</script>
+
+<p><img src="/images/wechat.jpg" alt="image"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JS/" rel="tag"># JS</a>
+          
+            <a href="/tags/跨域/" rel="tag"># 跨域</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/02/19/Reacts/tic-tac-toe/" rel="next" title="React井字棋游戏练习">
+                <i class="fa fa-chevron-left"></i> React井字棋游戏练习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/04/ES6/symbol/" rel="prev" title="Symbol">
+                Symbol <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div id="gitalk-container"></div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Silvia Xu">
+            
+              <p class="site-author-name" itemprop="name">Silvia Xu</p>
+              <p class="site-description motion-element" itemprop="description">人们通常只会跟你说要学会把握机会，不会告诉你什么是机会。那么我说你的能力决定了你的机会，你想走多远就应该具备与之匹配的能力。时刻保持把握机会的能力，才能让自己立于不败之地！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Oldpost" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#XMLKttpRequest对象–Ajax的核心"><span class="nav-number">1.</span> <span class="nav-text">XMLKttpRequest对象–Ajax的核心</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用"><span class="nav-number">1.1.</span> <span class="nav-text">使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HTTP头部信息"><span class="nav-number">1.2.</span> <span class="nav-text">HTTP头部信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GET和POST请求"><span class="nav-number">1.3.</span> <span class="nav-text">GET和POST请求</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XMLHttpRequest-2级"><span class="nav-number">2.</span> <span class="nav-text">XMLHttpRequest 2级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FormData"><span class="nav-number">3.</span> <span class="nav-text">FormData</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#超时设定"><span class="nav-number">3.1.</span> <span class="nav-text">超时设定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#跨域"><span class="nav-number">4.</span> <span class="nav-text">跨域</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#同源策略"><span class="nav-number">4.1.</span> <span class="nav-text">同源策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨域解决方案一-JSONP"><span class="nav-number">4.2.</span> <span class="nav-text">跨域解决方案一 JSONP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨域解决方案一-cors"><span class="nav-number">4.3.</span> <span class="nav-text">跨域解决方案一 cors</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#简单请求"><span class="nav-number">4.3.1.</span> <span class="nav-text">简单请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#复杂请求"><span class="nav-number">4.3.2.</span> <span class="nav-text">复杂请求</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨域解决方案一-postMessage"><span class="nav-number">4.4.</span> <span class="nav-text">跨域解决方案一 postMessage</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨域解决方案一-websocket"><span class="nav-number">4.5.</span> <span class="nav-text">跨域解决方案一 websocket</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨域解决方案一-Node中间件代理-两次跨域"><span class="nav-number">4.6.</span> <span class="nav-text">跨域解决方案一 Node中间件代理(两次跨域)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨域解决方案一-nginx反向代理"><span class="nav-number">4.7.</span> <span class="nav-text">跨域解决方案一 nginx反向代理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨域解决方案一-window-name-iframe"><span class="nav-number">4.8.</span> <span class="nav-text">跨域解决方案一 window.name + iframe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨域解决方案一-location-hash-iframe"><span class="nav-number">4.9.</span> <span class="nav-text">跨域解决方案一 location.hash + iframe</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#跨域解决方案一-document-domain-iframe"><span class="nav-number">4.10.</span> <span class="nav-text">跨域解决方案一 document.domain + iframe</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Silvia Xu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '994262d31968df240079',
+          clientSecret: 'fb4240685c36949113b17be3c073b0b478a4af5b',
+          repo: 'Oldpost.github.io',
+          owner: 'Oldpost',
+          admin: ['Oldpost'],
+          id: location.pathname, // Ensure uniqueness and length less than 50
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("1DzyeOLsmVCuXnpBwpl2iE78-gzGzoHsz", "yVsgLwLpOL2IM42aHSnsLKa4");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":200,"height":200},"mobile":{"show":true},"log":false});</script></body>
+</html>

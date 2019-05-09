@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="原创,JS,">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="本文内容：  理解window对象–BOM的核心 控制窗口、框架和弹出窗口 利用location对象中的页面信息 使用navigator对象了解浏览器  BOM的核心–window对象window表示浏览器的一个实例。在浏览器中，window既是通过JavaScript访问浏览器的一个接口，也是ECMAScript规定的Global对象 什么是BOM? BOM(Browser Object Mod">
+<meta name="keywords" content="原创,JS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="BOM">
+<meta property="og:url" content="http://Oldpost.github.io/2019/01/23/JS/BOM/index.html">
+<meta property="og:site_name" content="梵唱 | MC">
+<meta property="og:description" content="本文内容：  理解window对象–BOM的核心 控制窗口、框架和弹出窗口 利用location对象中的页面信息 使用navigator对象了解浏览器  BOM的核心–window对象window表示浏览器的一个实例。在浏览器中，window既是通过JavaScript访问浏览器的一个接口，也是ECMAScript规定的Global对象 什么是BOM? BOM(Browser Object Mod">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/23/JS/BOM/ie.png">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/23/JS/BOM/setT.png">
+<meta property="og:image" content="http://oldpost.github.io/2019/01/23/JS/BOM/location.png">
+<meta property="og:image" content="http://oldpost.github.io/images/wechat.jpg">
+<meta property="og:updated_time" content="2019-05-07T03:15:52.579Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="BOM">
+<meta name="twitter:description" content="本文内容：  理解window对象–BOM的核心 控制窗口、框架和弹出窗口 利用location对象中的页面信息 使用navigator对象了解浏览器  BOM的核心–window对象window表示浏览器的一个实例。在浏览器中，window既是通过JavaScript访问浏览器的一个接口，也是ECMAScript规定的Global对象 什么是BOM? BOM(Browser Object Mod">
+<meta name="twitter:image" content="http://oldpost.github.io/2019/01/23/JS/BOM/ie.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://Oldpost.github.io/2019/01/23/JS/BOM/">
+
+
+
+
+
+  <title>BOM | 梵唱 | MC</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?d5cc3f72952807fe78b0435e68473f4d";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta custom-logo">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">梵唱 | MC</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">脚踏实地，自强不息</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br>
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br>
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off" placeholder="搜索..." spellcheck="false" type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+<div id="hitokoto" style="
+    text-align: center;
+    padding-top: 25px;
+"></div>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://Oldpost.github.io/2019/01/23/JS/BOM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Silvia Xu">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="梵唱 | MC">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">BOM</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-01-23T14:57:05+08:00">
+                2019-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/红皮书笔记-《JavaScript高级程序设计》/" itemprop="url" rel="index">
+                    <span itemprop="name">红皮书笔记--《JavaScript高级程序设计》</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2019/01/23/JS/BOM/" class="leancloud_visitors" data-flag-title="BOM">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>本文内容：</strong></p>
+<ul>
+<li>理解window对象–BOM的核心</li>
+<li>控制窗口、框架和弹出窗口</li>
+<li>利用location对象中的页面信息</li>
+<li>使用navigator对象了解浏览器</li>
+</ul>
+<h2 id="BOM的核心–window对象"><a href="#BOM的核心–window对象" class="headerlink" title="BOM的核心–window对象"></a>BOM的核心–window对象</h2><p>window表示浏览器的一个实例。在浏览器中，window既是通过JavaScript访问浏览器的一个接口，也是ECMAScript规定的Global对象</p>
+<h3 id="什么是BOM"><a href="#什么是BOM" class="headerlink" title="什么是BOM?"></a>什么是BOM?</h3><ul>
+<li>BOM(Browser Object Model)–浏览器对象模型</li>
+<li>提供了很多对象，用于访问浏览器的功能</li>
+<li>缺乏标准。JavaScript的标准是ECMA,DOM的标准化组织是W3C</li>
+</ul>
+<h3 id="具有全局作用域"><a href="#具有全局作用域" class="headerlink" title="具有全局作用域"></a>具有全局作用域</h3><p>在全局作用域中声明的变量、函数都会变成window对象的属性和方法。–即可以通过window.变量名/函数名访问。</p>
+<ul>
+<li><p>与直接在window上定义的属性有点不同:<strong>不能通过delete操作符删除</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var age = 20;</span><br><span class="line">window.color = <span class="string">'red'</span>;</span><br><span class="line">var delColor = delete window.color;</span><br><span class="line">var delAge = delete window.age;</span><br><span class="line">console.log(delColor); // IE8及以下报错 其他浏览器返回 <span class="literal">true</span></span><br><span class="line">console.log(delAge); // IE8及以下报错 其他浏览器返回 <span class="literal">false</span></span><br><span class="line">console.log(window.color); // undefined</span><br><span class="line">console.log(window.age); // 20</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>尝试访问未声明的变量会报错，但是通过查询window对象，返回undefined。可用于检测某变量是否声明</p>
+</li>
+</ul>
+<h3 id="窗口关系及框架"><a href="#窗口关系及框架" class="headerlink" title="窗口关系及框架"></a>窗口关系及框架</h3><p>&emsp;应用有框架集(frameset)或者框架(iframe)的页面时,<strong>每个框架</strong>都拥有自己的window对象，并且保存在iframes集合中。可通过<strong>数值索引</strong>(从0开始，从左至右，从上到下)或者<strong>框架名称</strong>来访问相应的window对象。eg:window.frames[0]或者window.frames[“topFrame”]–<strong>读取的是当前框架</strong><br><strong>相关的window属性：</strong></p>
+<ul>
+<li>window.top：返回当前窗口的最顶层浏览器窗口。eg:top.frames[0]或者top.frames[“topFrame”]–<strong>读取的是最高层框架</strong></li>
+<li><p>window.parent：返回当前框架的直接上层框架。当没有框架时，parent等于top(他们都等于window)</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">console.log(self.name); // 为空</span><br><span class="line">console.log(top === parent) // <span class="literal">true</span></span><br><span class="line">console.log(top === window) // <span class="literal">true</span></span><br><span class="line">console.log(parent === window) // <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>当最高层窗口不是通过window.open()打开时，window.name属性为空</p>
+</li>
+<li>window.self：实际上指向当前window，可以和window互换</li>
+</ul>
+<h3 id="窗口位置"><a href="#窗口位置" class="headerlink" title="窗口位置"></a>窗口位置</h3><p>用于确定和修改window对象位置的属性和方法：</p>
+<ul>
+<li>screenLeft和screenTop：分别表示窗口相对于屏幕左边和上边的位置。–<strong>IE、Safari、Opera和Chrome</strong></li>
+<li>screenX和screenY：：分别表示窗口相对于屏幕左边和上边的位置。–<strong>IE9及以上、Safari、Chrome和Firefox</strong>，Opera也支持但是与screenLeft和screenTop属性不对应</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">console.log(screenX)     // Chrome为0  Firefox为-8  Edge为0  IE9为-8 IE8报错  </span><br><span class="line">console.log(screenY)     // Chrome为0  Firefox为-8  Edge为0  IE9为-8 IE8报错  </span><br><span class="line">console.log(screenLeft)  // Chrome为0  Firefox报错  Edge为0  IE为0</span><br><span class="line">console.log(screenTop)   // Chrome为0  Firefox报错  Edge为0  IE为78</span><br><span class="line">console.log(typeof window.screenLeft)  // Chrome为number Firefox为undefined IE9为number  IE8为number  Edge为number</span><br><span class="line">console.log(typeof window.screenX)     // Chrome为number Firefox为number    IE9为number  IE8为undefined  Edge为number</span><br></pre></td></tr></table></figure>
+<p>在IE、Opera中，screenLeft和screenTop保存的是由屏幕的左边和上边到有window对象表示的<strong>页面可见区域</strong>的距离，而Safari、Chrome和Firefox中，screenY和screenTop都保存的是<strong>整个浏览器窗口</strong>相对于屏幕的坐标值。<br><img src="/2019/01/23/JS/BOM/ie.png"><br>应用有框架集(frameset)或者框架(iframe)的页面时：Safari、Chrome和Firefox<strong>始终返回</strong>页面中每个框架的top.screenY和top.screenX(无论从最外层还是从某个框架访问)。而在IE、Opera中会给出框架相对屏幕边界的精确坐标。导致无法跨浏览器取得窗口的精确坐标，但是可使用moveTo()和moveBy()将窗口精确地移动到一个新位置。<br><strong>moveTo()：</strong>接收2个参数,新位置的x和y<br><strong>moveBy()：</strong>接收2个参数,在水平和垂直方向上移动的像素数</p>
+<blockquote>
+<p>注意:Opera和IE中默认禁用这两个函数，另外这两个函数只能对最外层window对象用，不适合iframe</p>
+</blockquote>
+<h3 id="窗口大小"><a href="#窗口大小" class="headerlink" title="窗口大小"></a>窗口大小</h3><p>IE9、Firefox、Safari、Opera和Chrome都提供了4各相关属性：<strong>innerWidth、innerHeight、outerWidth和outerHeight</strong>。</p>
+<ul>
+<li>IE9、Firefox、Safari中，outerWidth和outerHeight<strong>始终返回</strong>浏览器窗口本身的尺寸(无论从最外层还是从某个框架访问)</li>
+<li>Opera中，outerWidth和outerHeight表示页面视图容器(Opera中单个标签页对应的浏览器窗口)的大小，而innerWidth和innerHeight表示该容器中页面视图区的大小(减去边框宽度)</li>
+<li>Chrome中，innerWidth、innerHeight与outerWidth、outerHeight返回的值相等，即视口(viewport)大小而非浏览器窗口大小</li>
+</ul>
+<p>获取页面可见区域的信息(DOM)：document.documentElement.clientWidth和document.documentElement.clientHeight保存着页面视口的信息–<strong>IE9、Firefox、Safari、Opera和Chrome</strong>高度差别很大</p>
+<p>对于移动设备，window.innerWidth和window.innerHeight保存着可见视口–屏幕上可见页面区域的大小。移动IE不支持这些属性，但支持document.documentElement.clientWidth和document.documentElement.clientHeight。在其他移动浏览器中，document.documentElement度量的是布局视口–渲染后页面的实际大小。</p>
+<blockquote>
+<p>移动设备视口：<a href="http://t.cn/zOZs0Tz" target="_blank" rel="noopener">http://t.cn/zOZs0Tz</a></p>
+</blockquote>
+<p>调整浏览器窗口大小：resizeTo()和resizeBy()<br><strong>resizeTo()：</strong>接收2个参数，浏览器窗口的新宽度和新高度<br><strong>resizeBy()：</strong>接收2个参数，新窗口与原窗口的宽度和高度之差</p>
+<blockquote>
+<p>注意:Opera和IE中默认禁用这两个函数，另外这两个函数只能对最外层window对象用，不适合iframe</p>
+</blockquote>
+<h3 id="导航和打开窗口"><a href="#导航和打开窗口" class="headerlink" title="导航和打开窗口"></a>导航和打开窗口</h3><ol>
+<li><p>弹出窗口<br>window.open():导航到一个特定的URL,或者打开一个新的浏览器窗口。接收4个参数：</p>
+<ul>
+<li>要加载的url</li>
+<li>窗口目标(可选)：可以是已有窗口或框架的名称，或者_self、_parent、_top或_blank</li>
+<li>一个特性字符串(可选): 设置新窗口的属性</li>
+<li>一个表示新页面是否取代浏览器历史记录中当前加载页面的布尔值(只在打开新窗口时有效)(可选)</li>
+</ul>
+<p>通过window.open()打开的窗口可以通过window.close()关闭。wroxWin.closed检测关闭属性。<br>通过window.open()打开的窗口有一个opener属性，保存着一个指向打开它的窗口的指针。可以通过window.opener = null 断开与原窗口的通信。原窗口不会追踪打开的窗口。</p>
+</li>
+<li>安全限制</li>
+<li>弹出窗口屏蔽程序</li>
+</ol>
+<h3 id="间歇调用和超时调用–window-setInterval-和window-setTimeout"><a href="#间歇调用和超时调用–window-setInterval-和window-setTimeout" class="headerlink" title="间歇调用和超时调用–window.setInterval()和window.setTimeout()"></a>间歇调用和超时调用–window.setInterval()和window.setTimeout()</h3><p><strong>超时调用–window.setTimeout()</strong>：在特性的时刻执行，接收<strong>要执行的代码</strong>和<strong>timeout</strong>两个参数，返回一个数值ID。</p>
+<ul>
+<li>要执行的代码：可以是包含JavaScript代码的字符串(和eval()函数使用的字符串一样)，也可以是一个callback函数。传递字符串可能导致性能损失，推荐callback函数</li>
+<li>timeout：需等待的毫秒数，时间一到就会将要执行的代码添加到任务队列中等待执行。</li>
+</ul>
+<p>调用setTimeout()之后会返回一个数值ID，表示超时调用。这个超时调用ID是计划执行代码的唯一标识符，可以通过它来取消超时调用–<strong>clearTimeout(timeoutid)</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">var setT = setTimeout(<span class="function"><span class="title">function</span></span> () &#123;</span><br><span class="line">  console.log(<span class="string">'我执行了'</span>);</span><br><span class="line">&#125;, 1000);</span><br><span class="line">console.log(setT); // 1</span><br><span class="line">console.log(typeof setT); // number</span><br></pre></td></tr></table></figure></p>
+<p><strong>间歇调用–window.setInterval()</strong>：按照指定的时间间隔重复执行代码，接收<strong>要执行的代码</strong>和<strong>timeout</strong>两个参数，返回一个数值ID。</p>
+<ul>
+<li>要执行的代码：可以是包含JavaScript代码的字符串(和eval()函数使用的字符串一样)，也可以是一个callback函数。传递字符串可能导致性能损失，推荐callback函数</li>
+<li>timeout：每次需等待的毫秒数，时间一到就会将要执行的代码添加到任务队列中等待执行。这里<strong>不管</strong>上次代码是否执行都会讲要执行的代码添加到任务列表。</li>
+</ul>
+<p>调用setTimeout()之后会返回一个数值ID，表示超时调用。这个超时调用ID是计划执行代码的唯一标识符，可以通过它来取消超时调用–<strong>clearInterval(timeoutid)</strong>。setTimeout()如果不手动取消，则会一直执行直至页面被卸载<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var setI = setInterval(<span class="function"><span class="title">function</span></span> () &#123;</span><br><span class="line">  console.log(<span class="string">'我执行了setInterval'</span>);</span><br><span class="line">&#125;, 1000);</span><br><span class="line">console.log(typeof setT); // 1</span><br><span class="line">var setT = setTimeout(<span class="function"><span class="title">function</span></span> () &#123;</span><br><span class="line">  console.log(<span class="string">'我执行了setTimeout'</span>);</span><br><span class="line">  clearInterval(setI)</span><br><span class="line">&#125;, 3000);</span><br></pre></td></tr></table></figure></p>
+<img src="/2019/01/23/JS/BOM/setT.png">
+<p>真正的开发过程中，应该<strong>尽量少用间歇调用，可以使用超时调用模拟间歇调用</strong></p>
+<h3 id="系统对话框"><a href="#系统对话框" class="headerlink" title="系统对话框"></a>系统对话框</h3><p>可以通过<strong>alert()、config()和prompt()</strong>调用系统对话框显示消息，这几种方法都是同步和模态的，即显示的时候代码会停止运行。</p>
+<blockquote>
+<p>此时间歇调用和超时调用也会暂停</p>
+</blockquote>
+<ul>
+<li>alert()：不会返回，接收一个提示参数</li>
+<li>confirm()：确认框，接收一个提示参数</li>
+<li>prompt()：提示框，提示用户输入某些信息。接收两个参数，第一个是提示语，第二个是文本框默认值</li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">console.log(alert(<span class="string">'yes'</span>)) // undefined</span><br><span class="line">console.log(confirm(<span class="string">'yes'</span>)) // 用户点击确认按钮返回<span class="literal">true</span> 或 否则返回<span class="literal">false</span></span><br><span class="line">console.log(prompt(<span class="string">'You break my heart'</span>,<span class="string">'Michael'</span>)) // 用户点击确认按钮返回输入框信息，否则返回null</span><br></pre></td></tr></table></figure>
+<p>通过JavaScript打开查找和打印对话框，异步显示。</p>
+<ul>
+<li>window.print()：打印</li>
+<li>find()：返回通过测试（函数内判断）的数组的第一个元素的值。当数组中的元素在测试条件时返回 true 时, find() 返回符合条件的元素，之后的值不会再调用执行函数。如果没有符合条件的元素返回 undefined。 <strong>find() 对于空数组，函数是不会执行的。</strong></li>
+</ul>
+<h2 id="location-对象"><a href="#location-对象" class="headerlink" title="location()对象"></a>location()对象</h2><p>localtion既是window对象的属性，也是document的对象。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">console.log(window.location)</span><br></pre></td></tr></table></figure></p>
+<img src="/2019/01/23/JS/BOM/location.png">
+<ul>
+<li>hash：返回URL中的hash，如果URL中不包含散列则返回空字符串</li>
+<li>host：返回服务器名称和端口号</li>
+<li>hostname：返回服务器名称(不带端口号)</li>
+<li>href：返回完整的URL(和window.location.toString()返回值一样)</li>
+<li>pathname：返回URL中的目录和(或)文件名</li>
+<li>port：返回端口号</li>
+<li>protocol：返回页面使用的协议(http或https)</li>
+<li>search：返回URL的查询字符串，这个字符串以?开头</li>
+</ul>
+<h3 id="位置操作"><a href="#位置操作" class="headerlink" title="位置操作"></a>位置操作</h3><p>使用location对象可以通过很多方法来改变浏览器位置</p>
+<ol>
+<li>location.assign()：传递一个URL–立即打开新URL并在浏览器的历史记录中生成一条记录。</li>
+<li>window.location/location.href：设置一个URL值，会以该值调用assign()方法</li>
+<li><p>修改location其他属性也可以改变</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 原先URL为：https://blog.silviaxu.com/</span><br><span class="line">// 当前URL为：https://blog.silviaxu.com/<span class="comment">#section</span></span><br><span class="line">location.hash=<span class="string">"#section"</span> </span><br><span class="line">// 当前URL为：https://blog.silviaxu.com/?page=1<span class="comment">#section</span></span><br><span class="line">location.search = <span class="string">"?page=1"</span></span><br><span class="line">// 当前URL为：https://oldpost.github.io/?page=1<span class="comment">#section</span></span><br><span class="line">location.hostname = <span class="string">"https://oldpost.github.io"</span></span><br><span class="line">// 当前URL为：https://oldpost.github.io/2019/01/17/JS-6/?page=1<span class="comment">#section</span></span><br><span class="line">location.pathname = <span class="string">"/2019/01/17/JS-6/"</span></span><br><span class="line">// 当前URL为：https://oldpost.github.io:8086/2019/01/17/JS-6/?page=1<span class="comment">#section</span></span><br><span class="line">location.port = 8086</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>禁止用户通过后退按钮回到上一个页面:replace()方法—接收要跳转的URL但是不会在历史记录中产生新纪录</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">location.replace(<span class="string">'https://blog.silviaxu.com/'</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>reload()：重新加载当前页面</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">location.reload(); // 有可能从缓存中加载</span><br><span class="line">location.reload(); // 从服务器重新加载</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<h2 id="navigator对象"><a href="#navigator对象" class="headerlink" title="navigator对象"></a>navigator对象</h2><h2 id="history对象"><a href="#history对象" class="headerlink" title="history对象"></a>history对象</h2><p>go()、back()、forward()</p>
+<p><img src="/images/wechat.jpg" alt="微信公众号"></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/原创/" rel="tag"># 原创</a>
+          
+            <a href="/tags/JS/" rel="tag"># JS</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/17/JS/JS-6/" rel="next" title="面向对象">
+                <i class="fa fa-chevron-left"></i> 面向对象
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/25/xshell/" rel="prev" title="Xshell5打包流程及常用命令">
+                Xshell5打包流程及常用命令 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript">
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div id="gitalk-container"></div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/avatar.png" alt="Silvia Xu">
+            
+              <p class="site-author-name" itemprop="name">Silvia Xu</p>
+              <p class="site-description motion-element" itemprop="description">人们通常只会跟你说要学会把握机会，不会告诉你什么是机会。那么我说你的能力决定了你的机会，你想走多远就应该具备与之匹配的能力。时刻保持把握机会的能力，才能让自己立于不败之地！</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">32</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">21</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Oldpost" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#BOM的核心–window对象"><span class="nav-number">1.</span> <span class="nav-text">BOM的核心–window对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#什么是BOM"><span class="nav-number">1.1.</span> <span class="nav-text">什么是BOM?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#具有全局作用域"><span class="nav-number">1.2.</span> <span class="nav-text">具有全局作用域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#窗口关系及框架"><span class="nav-number">1.3.</span> <span class="nav-text">窗口关系及框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#窗口位置"><span class="nav-number">1.4.</span> <span class="nav-text">窗口位置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#窗口大小"><span class="nav-number">1.5.</span> <span class="nav-text">窗口大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导航和打开窗口"><span class="nav-number">1.6.</span> <span class="nav-text">导航和打开窗口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#间歇调用和超时调用–window-setInterval-和window-setTimeout"><span class="nav-number">1.7.</span> <span class="nav-text">间歇调用和超时调用–window.setInterval()和window.setTimeout()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#系统对话框"><span class="nav-number">1.8.</span> <span class="nav-text">系统对话框</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#location-对象"><span class="nav-number">2.</span> <span class="nav-text">location()对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#位置操作"><span class="nav-number">2.1.</span> <span class="nav-text">位置操作</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#navigator对象"><span class="nav-number">3.</span> <span class="nav-text">navigator对象</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#history对象"><span class="nav-number">4.</span> <span class="nav-text">history对象</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Silvia Xu</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+  <script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+   <script type="text/javascript">
+        var gitalk = new Gitalk({
+          clientID: '994262d31968df240079',
+          clientSecret: 'fb4240685c36949113b17be3c073b0b478a4af5b',
+          repo: 'Oldpost.github.io',
+          owner: 'Oldpost',
+          admin: ['Oldpost'],
+          id: location.pathname, // Ensure uniqueness and length less than 50
+          distractionFreeMode: 'true'
+        })
+        gitalk.render('gitalk-container')
+       </script>
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("1DzyeOLsmVCuXnpBwpl2iE78-gzGzoHsz", "yVsgLwLpOL2IM42aHSnsLKa4");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  <!-- 代码块复制功能 -->
+  <script type="text/javascript" src="/js/src/clipboard.min.js"></script>
+  <script type="text/javascript" src="/js/src/clipboard-use.js"></script>
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"debug":false,"model":{"jsonPath":"/live2dw/assets/wanko.model.json"},"display":{"position":"left","width":200,"height":200},"mobile":{"show":true},"log":false});</script></body>
+</html>
